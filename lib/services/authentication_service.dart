@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import '../app/http_client.dart';
 import '../datamodels/auth_response.dart';
 import '../datamodels/user.dart';
-import '../app/locator.dart';
 
 @lazySingleton
 class AuthenticationService with ReactiveServiceMixin {
@@ -38,6 +37,8 @@ class AuthenticationService with ReactiveServiceMixin {
     @required String password,
   }) async {
     try {
+      print('[AuthService] Logging in...');
+
       Response response = await dio.post(
         '/api/auth/login',
         data: {
@@ -51,6 +52,8 @@ class AuthenticationService with ReactiveServiceMixin {
       _token.value = data.accessToken;
       setToken(data.accessToken);
       await fetchUser();
+
+      print('[AuthService] Logged in');
 
       return response;
     } on DioError catch (e) {
@@ -101,8 +104,6 @@ class AuthenticationService with ReactiveServiceMixin {
         "Authorization": "Bearer ${_token.value}",
         "accept": "application/json",
       },
-      followRedirects: false,
-      // validateStatus: (status) => status < 500,
     );
   }
 
